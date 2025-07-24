@@ -165,14 +165,14 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {error ? (
+        {error && (
           <div className="mb-8 bg-red-50 border border-red-200 rounded-lg p-4">
             <div className="flex items-center">
               <ExclamationTriangleIcon className="h-5 w-5 text-red-400 mr-2" />
               <span className="text-red-800">{error}</span>
             </div>
           </div>
-        ) : null}
+        )}
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -399,91 +399,6 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-          <button
-            onClick={handleRefresh}
-            disabled={isRefreshing}
-            className="inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-          >
-            <ArrowPathIcon className={`h-5 w-5 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
-            Refresh
-          </button>
-        </div>
-      </div>
-
-      {error ? (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 mt-4">
-          <div className="bg-red-50 text-red-600 p-4 rounded-md">{error}</div>
-        </div>
-      ) : (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-          <div className="py-4">
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {/* Containers need to transit */}
-              <Link to="/assigned-containers" className="bg-white overflow-hidden shadow rounded-lg hover:bg-gray-50 transition-colors">
-                <div className="p-5">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                      </svg>
-                    </div>
-                    <div className="ml-5 w-0 flex-1">
-                      <dl>
-                        <dt className="text-sm font-medium text-gray-500 truncate">Containers need to transit</dt>
-                        <dd className="flex items-baseline">
-                          <div className="text-2xl font-semibold text-gray-900">{stats.assignedJobs}</div>
-                        </dd>
-                      </dl>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-
-
-
-              {/* Alerts */}
-              <div className="bg-white overflow-hidden shadow rounded-lg">
-                <div className="p-5">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                      </svg>
-                    </div>
-                    <div className="ml-5 w-0 flex-1">
-                      <dl>
-                        <dt className="text-sm font-medium text-gray-500 truncate">Active Alerts</dt>
-                        <dd className="flex items-baseline">
-                          <div className="text-2xl font-semibold text-gray-900">{stats.alerts}</div>
-                        </dd>
-                      </dl>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* World Map */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 mt-6">
-        <div className="bg-white shadow rounded-lg p-4">
-          <div className="flex items-center mb-4">
-            <MapIcon className="h-6 w-6 text-indigo-600 mr-2" />
-            <h2 className="text-xl font-semibold text-gray-900">Container Locations & Routes</h2>
-          </div>
-          <WorldMap
-            containers={containers}
-            routes={routes}
-            isLoading={isMapLoading}
-            height="600px"
-          />
         </div>
       </div>
     </div>
