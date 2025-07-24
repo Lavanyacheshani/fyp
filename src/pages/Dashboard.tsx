@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { ArrowPathIcon, MapIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon, MapIcon, TruckIcon, ExclamationTriangleIcon, CheckCircleIcon, ClockIcon } from '@heroicons/react/24/outline';
 import toast from 'react-hot-toast';
 import WorldMap from '../components/WorldMap';
 import type { ContainerMarker, RouteData } from '../components/WorldMap';
@@ -140,10 +140,270 @@ export default function Dashboard() {
   if (isLoading) return <div className="p-4">Loading...</div>;
 
   return (
-    <div className="py-6">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50">
+      {/* Header Section */}
+      <div className="bg-white shadow-sm border-b border-green-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">
+                Dashboard Overview
+              </h1>
+              <p className="mt-2 text-gray-600">Monitor your transportation operations and container status</p>
+            </div>
+            <button
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 transition-all duration-200"
+            >
+              <ArrowPathIcon className={`h-5 w-5 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+              {isRefreshing ? 'Refreshing...' : 'Refresh'}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {error ? (
+          <div className="mb-8 bg-red-50 border border-red-200 rounded-lg p-4">
+            <div className="flex items-center">
+              <ExclamationTriangleIcon className="h-5 w-5 text-red-400 mr-2" />
+              <span className="text-red-800">{error}</span>
+            </div>
+          </div>
+        ) : null}
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {/* Containers need to transit */}
+          <Link 
+            to="/assigned-containers" 
+            className="group bg-white rounded-xl shadow-sm border border-green-100 hover:shadow-lg hover:border-green-200 transition-all duration-200 transform hover:-translate-y-1"
+          >
+            <div className="p-6">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
+                        <TruckIcon className="h-6 w-6 text-green-600" />
+                      </div>
+                    </div>
+                    <div className="ml-4">
+                      <p className="text-sm font-medium text-gray-600">Containers to Transit</p>
+                      <p className="text-2xl font-bold text-gray-900">{stats.assignedJobs}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-green-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </div>
+              <div className="mt-4 flex items-center text-sm text-green-600">
+                <CheckCircleIcon className="h-4 w-4 mr-1" />
+                <span>Click to view details</span>
+              </div>
+            </div>
+          </Link>
+
+          {/* In Transit */}
+          <div className="bg-white rounded-xl shadow-sm border border-green-100 p-6">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <ClockIcon className="h-6 w-6 text-blue-600" />
+                </div>
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">In Transit</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.inTransit}</p>
+              </div>
+            </div>
+            <div className="mt-4 text-sm text-gray-500">
+              Currently being transported
+            </div>
+          </div>
+
+          {/* Completed */}
+          <div className="bg-white rounded-xl shadow-sm border border-green-100 p-6">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                  <CheckCircleIcon className="h-6 w-6 text-green-600" />
+                </div>
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Completed Today</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.completed}</p>
+              </div>
+            </div>
+            <div className="mt-4 text-sm text-gray-500">
+              Successfully delivered
+            </div>
+          </div>
+
+          {/* Active Alerts */}
+          <div className="bg-white rounded-xl shadow-sm border border-green-100 p-6">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                  <ExclamationTriangleIcon className="h-6 w-6 text-red-600" />
+                </div>
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Active Alerts</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.alerts}</p>
+              </div>
+            </div>
+            <div className="mt-4 text-sm text-gray-500">
+              Require immediate attention
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="bg-white rounded-xl shadow-sm border border-green-100 p-6 mb-8">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Link
+              to="/containers"
+              className="flex items-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors group"
+            >
+              <div className="w-10 h-10 bg-green-200 rounded-lg flex items-center justify-center mr-3 group-hover:bg-green-300 transition-colors">
+                <TruckIcon className="h-5 w-5 text-green-700" />
+              </div>
+              <div>
+                <p className="font-medium text-gray-900">View Containers</p>
+                <p className="text-sm text-gray-600">Manage container assignments</p>
+              </div>
+            </Link>
+
+            <Link
+              to="/vehicles/register"
+              className="flex items-center p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors group"
+            >
+              <div className="w-10 h-10 bg-blue-200 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-300 transition-colors">
+                <svg className="h-5 w-5 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+              </div>
+              <div>
+                <p className="font-medium text-gray-900">Register Vehicle</p>
+                <p className="text-sm text-gray-600">Add new transport vehicle</p>
+              </div>
+            </Link>
+
+            <Link
+              to="/profile"
+              className="flex items-center p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors group"
+            >
+              <div className="w-10 h-10 bg-purple-200 rounded-lg flex items-center justify-center mr-3 group-hover:bg-purple-300 transition-colors">
+                <svg className="h-5 w-5 text-purple-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+              <div>
+                <p className="font-medium text-gray-900">Profile Settings</p>
+                <p className="text-sm text-gray-600">Update your information</p>
+              </div>
+            </Link>
+
+            <Link
+              to="/help"
+              className="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors group"
+            >
+              <div className="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center mr-3 group-hover:bg-gray-300 transition-colors">
+                <svg className="h-5 w-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div>
+                <p className="font-medium text-gray-900">Help & Support</p>
+                <p className="text-sm text-gray-600">Get assistance</p>
+              </div>
+            </Link>
+          </div>
+        </div>
+
+        {/* World Map Section */}
+        <div className="bg-white rounded-xl shadow-sm border border-green-100 overflow-hidden">
+          <div className="px-6 py-4 bg-gradient-to-r from-green-50 to-white border-b border-green-100">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                  <MapIcon className="h-6 w-6 text-green-600" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-900">Global Container Tracking</h2>
+                  <p className="text-sm text-gray-600">Real-time locations and route analytics</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-4 text-sm text-gray-600">
+                <div className="flex items-center">
+                  <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                  <span>Active</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-3 h-3 bg-yellow-500 rounded-full mr-2"></div>
+                  <span>Warning</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
+                  <span>Inactive</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="p-6">
+            <WorldMap
+              containers={containers}
+              routes={routes}
+              isLoading={isMapLoading}
+              height="600px"
+            />
+          </div>
+        </div>
+
+        {/* Recent Activity */}
+        <div className="mt-8 bg-white rounded-xl shadow-sm border border-green-100 p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h2>
+          <div className="space-y-4">
+            <div className="flex items-center p-4 bg-green-50 rounded-lg">
+              <div className="w-8 h-8 bg-green-200 rounded-full flex items-center justify-center mr-3">
+                <CheckCircleIcon className="h-4 w-4 text-green-700" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-900">Container delivery completed</p>
+                <p className="text-xs text-gray-600">2 minutes ago</p>
+              </div>
+            </div>
+            <div className="flex items-center p-4 bg-blue-50 rounded-lg">
+              <div className="w-8 h-8 bg-blue-200 rounded-full flex items-center justify-center mr-3">
+                <TruckIcon className="h-4 w-4 text-blue-700" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-900">New container assigned</p>
+                <p className="text-xs text-gray-600">15 minutes ago</p>
+              </div>
+            </div>
+            <div className="flex items-center p-4 bg-yellow-50 rounded-lg">
+              <div className="w-8 h-8 bg-yellow-200 rounded-full flex items-center justify-center mr-3">
+                <ExclamationTriangleIcon className="h-4 w-4 text-yellow-700" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-900">Temperature alert resolved</p>
+                <p className="text-xs text-gray-600">1 hour ago</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
           <button
             onClick={handleRefresh}
             disabled={isRefreshing}
