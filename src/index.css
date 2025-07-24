@@ -1,0 +1,134 @@
+@import 'leaflet/dist/leaflet.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: Inter, system-ui, sans-serif;
+  }
+  
+  body {
+    @apply bg-secondary-50 text-secondary-900;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-medium text-secondary-900;
+  }
+}
+
+@layer components {
+  .container-card {
+    @apply bg-white rounded-lg shadow-card p-5 transition-all hover:shadow-lg;
+  }
+  
+  .stats-card {
+    @apply bg-white rounded-lg shadow-card p-5;
+  }
+  
+  .status-badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+  
+  .status-badge.pending {
+    @apply bg-warning-100 text-warning-800;
+  }
+  
+  .status-badge.processing {
+    @apply bg-secondary-100 text-secondary-800;
+  }
+  
+  .status-badge.shipped {
+    @apply bg-accent-100 text-accent-800;
+  }
+  
+  .status-badge.delivered {
+    @apply bg-success-100 text-success-800;
+  }
+  
+  .status-badge.cancelled {
+    @apply bg-error-100 text-error-800;
+  }
+  
+  .status-badge.in_transit {
+    @apply bg-primary-100 text-primary-800;
+  }
+  
+  .status-badge.delayed {
+    @apply bg-warning-100 text-warning-800;
+  }
+  
+  .status-badge.customs {
+    @apply bg-secondary-100 text-secondary-800;
+  }
+  
+  .status-badge.loading {
+    @apply bg-accent-100 text-accent-800;
+  }
+  
+  .status-badge.active {
+    @apply bg-success-100 text-success-800;
+  }
+  
+  .status-badge.inactive {
+    @apply bg-secondary-100 text-secondary-800;
+  }
+  
+  .status-badge.warning {
+    @apply bg-warning-100 text-warning-800;
+  }
+  
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 border border-transparent 
+    rounded-md shadow-sm text-sm font-medium focus:outline-none focus:ring-2 
+    focus:ring-offset-2 transition-colors duration-200;
+  }
+  
+  .btn-primary {
+    @apply bg-primary-600 text-white hover:bg-primary-700 
+    focus:ring-primary-500;
+  }
+  
+  .btn-secondary {
+    @apply bg-secondary-100 text-secondary-700 hover:bg-secondary-200 
+    focus:ring-secondary-500;
+  }
+  
+  .btn-accent {
+    @apply bg-accent-500 text-white hover:bg-accent-600 
+    focus:ring-accent-400;
+  }
+  
+  .btn-outline {
+    @apply border-secondary-300 text-secondary-700 bg-white hover:bg-secondary-50;
+  }
+  
+  .input {
+    @apply block w-full px-3 py-2 border border-secondary-300 rounded-md shadow-sm 
+    placeholder-secondary-400 focus:outline-none focus:ring-primary-500 
+    focus:border-primary-500 sm:text-sm;
+  }
+  
+  .select {
+    @apply block w-full pl-3 pr-10 py-2 text-base border-secondary-300 
+    focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm 
+    rounded-md;
+  }
+  
+  .card-hover {
+    @apply transition-all duration-200 hover:shadow-lg hover:border-primary-200;
+  }
+  
+  .nav-link {
+    @apply flex items-center px-4 py-2 text-sm font-medium rounded-md;
+  }
+  
+  .nav-link-active {
+    @apply text-primary-700 bg-primary-50;
+  }
+  
+  .nav-link-inactive {
+    @apply text-secondary-600 hover:bg-secondary-50 hover:text-secondary-900;
+  }
+}
